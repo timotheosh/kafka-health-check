@@ -1,9 +1,10 @@
 (ns kafka-health-check.core
-  (:require [clojure.java.jmx :as jmx])
+  (:require [clojure.java.jmx :as jmx]
+            [clojure.data.json :refer [write-str]])
   (:gen-class
-   :name cljkafka.core
+   :name kafka_health_check.core
    :methods [#^{:static true}
-             [GET] [String] java.util.HashMap]))
+             [GET [String] java.util.HashMap]]))
 
 (defn GET
   [ctx]
@@ -19,15 +20,19 @@
            200
            503)
          :header "Content-Type application/json"
-         :body {:under-replicated-partitions up
-                :offline-partitions op}}))
+         :body (write-str {:under-replicated-partitions up
+                           :offline-partitions op})}))
     (catch java.io.IOException e
       {:status 503
-       :header "Content-Type: text/plain"
-       :body (str "Failed to Connect!")})
-    (catch Exception e (str "caught exception: " (.toString e)))))
+       :header "Content-Type: application/json"
+       :body (write-str {:result "Failed to Connect!"})})
+    (catch Exception e
+      {:status 502
+       :header "Content-Type: application/json"
+       :body (write-str
+              (str "caught exception: " (str e)))})))
 
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
-  (println "Hello, World!"))
+  (GET ""))
