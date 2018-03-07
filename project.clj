@@ -1,4 +1,4 @@
-(defproject kafka-health-check "0.1.0-SNAPSHOT"
+(defproject kafka-health-check "0.1.1-SNAPSHOT"
   :description "Kafka Health Check Module for Ancillary"
   :url "https://github.com/timotheosh/kafka-health-check"
   :license {:name "MIT License"

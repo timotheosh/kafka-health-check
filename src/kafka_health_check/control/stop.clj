@@ -1,6 +1,6 @@
 (ns kafka-health-check.control.stop
   (:require [com.stuartsierra.component :as component]
-            [clojure.data.json :refer [write-str]]
+            [clojure.data.json :refer [write-str read-str]]
             [me.raynes.conch
              :refer [programs
                      with-programs
@@ -40,7 +40,7 @@
 (defn- get-params
   "Takes a request object and extracts the parameters."
   [ctx]
-  (:params (:request ctx)))
+  (read-str (:params (:request ctx))))
 
 (defn POST
   [ctx]
