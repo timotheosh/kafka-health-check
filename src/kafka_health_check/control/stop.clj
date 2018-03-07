@@ -46,7 +46,7 @@
 
 (defn POST
   [ctx]
-  (let [parms (body-as-string ctx)
+  (let [parms (read-str (body-as-string ctx))
         status (atom 500)
         body (atom {:result "Requested Service Unavailable"})]
     (when (= (get parms "confirm") "true")
