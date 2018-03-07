@@ -29,7 +29,7 @@
     (catch  javax.management.InstanceNotFoundException e
       {:status 503
        :header "Content-Type: application/json"
-       :body (write-str {:result "Service is offline."}})
+       :body (write-str {:result "Service is offline."})})
     (catch Exception e
       {:status 502
        :header "Content-Type: application/json"

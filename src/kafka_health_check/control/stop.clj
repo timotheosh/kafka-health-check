@@ -6,7 +6,8 @@
                      with-programs
                      let-programs]
              :as sh]
-            [clojure.string :as str])
+            [clojure.string :as str]
+            [clojure.java.io :as io])
   (:gen-class
    :name kafka_health_check.control.stop
    :methods [#^{:static true}
@@ -37,17 +38,18 @@
     (.stop command)
     data))
 
-(defn- get-params
-  "Takes a request object and extracts the parameters."
-  [ctx]
-  (read-str (:params (:request ctx))))
+(defn- body-as-string [ctx]
+  (if-let [body (get-in ctx [:request :body])]
+    (condp instance? body
+      java.lang.String body
+      (slurp (io/reader body)))))
 
 (defn POST
   [ctx]
-  (let [parms (get-params ctx)
+  (let [parms (body-as-string ctx)
         status (atom 500)
         body (atom {:result "Requested Service Unavailable"})]
-    (when (= (:confirm parms) "true")
+    (when (= (get parms "confirm") "true")
       (let [result
             (execute-command "/usr/local/bin/supervisorctl stop kafka:kafka-0")]
         (reset! status (:status result))
